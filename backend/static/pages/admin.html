@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUPER ADMIN STRONA POLECAM CIEPŁO</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Roboto", sans-serif;
+        }
+
+        header {
+            color: #eeebdd;
+            background-color: #1b1717;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 10vh;
+        }
+
+        #content {
+            color: #1b1717;
+            background-color: #eeebdd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 80vh;
+        }
+
+        #formularz {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #transferDir {
+            height: 300px;
+            width: 300px;
+            border-radius: 6px;
+            color: #eeebdd;
+            background-color: #1b1717;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        footer {
+            color: #eeebdd;
+            background-color: #1b1717;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 10vh;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>SUPER STRONA ADMINA</h1>
+    </header>
+    <div id="content">
+        <div id="formularz">
+            <h2>Upload plików</h2>
+            <button id="send-button" style="margin-bottom: 10px;" onclick="sendFiles()">Wyślij i niech leci</button>
+            <div id="transferDir">
+                Upuść tutaj
+            </div>
+        </div>
+    </div>
+    <footer>
+        <h4>kolorystyka dostosowana dla ludzi pijących kawę (ja nie piję)</h4>
+    </footer>
+    <script>
+        let files;
+        function sendFiles() {
+            let fd = new FormData();
+            for (let i = 0; i < files.length; i++) {
+                fd.append('file', files[i])
+            }
+            for ([key, value] of fd.entries()) {
+                console.log(key, value);
+            }
+            if (files === undefined) {
+                alert("nie przesłano żadnych plików do uploadu")
+            } else {
+                fetch("http://localhost:3000/upload", {
+                    method: "post",
+                    body: fd,
+                })
+                    .catch((err) => console.log(err));
+            }
+        }
+        console.log(files)
+        window.addEventListener("dragover", function (e) {
+            e = e || event;
+            e.preventDefault();
+        }, false);
+        window.addEventListener("drop", function (e) {
+            e = e || event;
+            e.preventDefault();
+        }, false);
+        document.querySelector("#transferDir").ondragenter = function (e) {
+            document.querySelector("#transferDir").innerHTML = "Upuść";
+            document.querySelector("#transferDir").style.backgroundColor = "#ce1212";
+            e.stopPropagation();
+            e.preventDefault();
+        }
+        document.querySelector("#transferDir").ondragleave = function (e) {
+            document.querySelector("#transferDir").innerHTML = "Upload";
+            document.querySelector("#transferDir").style.backgroundColor = "#1b1717";
+            e.stopPropagation();
+            e.preventDefault();
+
+        }
+        document.querySelector("#transferDir").ondrop = function (e) {
+            document.querySelector("#transferDir").style.display = "none";
+            e.stopPropagation();
+            e.preventDefault();
+            files = e.dataTransfer.files;
+            console.log(files)
+            for (let i = 0; i < files.length; i++) {
+                let paragraph = document.createElement("p")
+                console.log(files[i])
+                paragraph.innerHTML = files[i].name;
+                document.querySelector("#formularz").appendChild(paragraph)
+            }
+        }
+    </script>
+</body>
+
+</html>
